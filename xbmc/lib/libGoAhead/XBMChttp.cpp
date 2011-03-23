@@ -1845,7 +1845,7 @@ int CXbmcHttp::xbmcPlayerPlayMedia(int numParas, CStdString paras[])
   }
   
   // Load thumbs.
-  if (mediaType == "episode" || mediaType == "movie" || mediaType == "video")
+  if (mediaType == "episode" || mediaType == "movie" || mediaType == "video" || mediaType == "clip")
   {
     CVideoThumbLoader loader;
     loader.LoadItem(item.get());
