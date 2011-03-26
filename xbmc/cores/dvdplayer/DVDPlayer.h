@@ -318,6 +318,7 @@ protected:
   CFileItem   m_item;
   
   CFileItemPtr m_itemWithDetails;
+  bool         m_hidingSub;
 
   MediaPartPtr GetMediaPart()
   {
