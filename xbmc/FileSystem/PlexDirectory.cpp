@@ -1529,10 +1529,6 @@ void CPlexDirectory::Parse(const CURL& url, TiXmlElement* root, CFileItemList &i
     mediaNode = PlexMediaNode::Create(element);
     if (mediaNode != 0)
     {
-      CFileItemPtr item = mediaNode->BuildFileItem(url, *element, isLocal);
-      if (item)
-        items.Add(item);
-    
       // Get the type.
       const char* pType = element->Attribute("type");
       if (pType)
@@ -1559,16 +1555,23 @@ void CPlexDirectory::Parse(const CURL& url, TiXmlElement* root, CFileItemList &i
           items.SetContent(type);
           gotType = true;
         }
-        
-        // Set the content type for the item.
-        item->SetProperty("mediaType", type);
       }
+            
+      CFileItemPtr item = mediaNode->BuildFileItem(url, *element, isLocal);
+      if (!item)
+        continue;
+      
+      // Set the content type for the item.
+      if (pType)
+        item->SetProperty("mediaType", pType);
       
       // Tags.
       ParseTags(element, item, "Genre");
       ParseTags(element, item, "Writer");
       ParseTags(element, item, "Director");
       ParseTags(element, item, "Role");
+      
+      items.Add(item);
     }
   }
   
