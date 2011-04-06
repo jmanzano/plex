@@ -1869,6 +1869,10 @@ int CXbmcHttp::xbmcPlayerPlayMedia(int numParas, CStdString paras[])
   CKey emptyKey;
   g_application.OnKey(emptyKey);
   
+  // Additionally, we we're displaying a slideshow, get out.
+  if (m_gWindowManager.GetActiveWindow() == WINDOW_SLIDESHOW)
+    m_gWindowManager.PreviousWindow();
+
   // Play the media.
   if (mediaType == "track")
   {
