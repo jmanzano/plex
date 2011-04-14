@@ -1531,9 +1531,12 @@ void CPlexDirectory::Parse(const CURL& url, TiXmlElement* root, CFileItemList &i
     {
       // Get the type.
       const char* pType = element->Attribute("type");
+      string type;
+      
       if (pType)
       {
-        string type = pType;
+        type = pType;
+        
         if (type == "show")
           type = "tvshows";
         else if (type == "season")
@@ -1558,20 +1561,20 @@ void CPlexDirectory::Parse(const CURL& url, TiXmlElement* root, CFileItemList &i
       }
             
       CFileItemPtr item = mediaNode->BuildFileItem(url, *element, isLocal);
-      if (!item)
-        continue;
-      
-      // Set the content type for the item.
-      if (pType)
-        item->SetProperty("mediaType", pType);
-      
-      // Tags.
-      ParseTags(element, item, "Genre");
-      ParseTags(element, item, "Writer");
-      ParseTags(element, item, "Director");
-      ParseTags(element, item, "Role");
-      
-      items.Add(item);
+      if (item)
+      {
+        // Set the content type for the item.
+        if (pType)
+          item->SetProperty("mediaType", type);
+        
+        // Tags.
+        ParseTags(element, item, "Genre");
+        ParseTags(element, item, "Writer");
+        ParseTags(element, item, "Director");
+        ParseTags(element, item, "Role");
+        
+        items.Add(item);
+      }
     }
   }
   
