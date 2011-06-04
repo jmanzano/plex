@@ -432,5 +432,7 @@ protected:
   CEdl m_Edl;
     
   CPlayerOptions m_PlayerOptions;
+  
+  string m_filePath;
 };
 

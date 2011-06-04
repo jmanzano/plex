@@ -316,9 +316,16 @@ bool CDVDPlayer::OpenFile(const CFileItem& file, const CPlayerOptions &options)
 
     // See if we can find the file locally.
     CFileItem theFile(file);
-    string localPath = file.GetProperty("localPath");
-    if (localPath.size() > 0 && CFile::Exists(localPath))
-      theFile.m_strPath = localPath;
+    
+    if (g_guiSettings.GetBool("videoplayer.forcehttptopms") == false)
+    {
+      string localPath = file.GetProperty("localPath");
+      if (localPath.size() > 0 && CFile::Exists(localPath))
+        theFile.m_strPath = localPath;
+    }
+      
+    // Remember the played path.
+    m_filePath = theFile.m_strPath;
     
     // See if we need to resolve an indirect item.
     if (file.GetPropertyInt("indirect") == 1)
@@ -2141,7 +2148,11 @@ void CDVDPlayer::GetGeneralInfo(CStdString& strGeneralInfo)
     int iFramesDropped = m_dvdPlayerVideo.GetNrOfDroppedFrames();
     cEdlStatus = m_Edl.GetEdlStatus();
 
-    strGeneralInfo.Format("DVD Player ad:%6.3f, a/v:%6.3f, dropped:%d, cpu: %i%%. edl: %c source bitrate: %4.2f MBit/s", dDelay, dDiff, iFramesDropped, (int)(CThread::GetRelativeUsage()*100), cEdlStatus, (double)GetSourceBitrate() / (1024.0*1024.0));
+    string source = "file";
+    if (m_filePath.find("http://") != string::npos)
+      source = "HTTP";
+    
+    strGeneralInfo.Format("Source: %s DVD Player ad:%6.3f, a/v:%6.3f, dropped:%d, cpu: %i%%. edl: %c source bitrate: %4.2f MBit/s", source.c_str(), dDelay, dDiff, iFramesDropped, (int)(CThread::GetRelativeUsage()*100), cEdlStatus, (double)GetSourceBitrate() / (1024.0*1024.0));
   }
 }
 
