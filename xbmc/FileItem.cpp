@@ -522,8 +522,11 @@ void CFileItem::Serialize(CArchive& ar)
 bool CFileItem::IsVideo() const
 {
   string type = GetProperty("type");
-  if (type == "episode" || type == "movie")
+  if (type == "episode" || type == "movie" || type == "clip")
     return true;
+  
+  if (type == "photo")
+    return false;
   
   /* check preset content type */
   if( m_contenttype.Left(6).Equals("video/") )
@@ -599,6 +602,9 @@ bool CFileItem::IsPicture() const
   if( m_contenttype.Left(6).Equals("image/") )
     return true;
 
+  if (GetProperty("type") == "image" || GetProperty("type") == "photo") 
+    return true;
+  
   CStdString extension;
   CUtil::GetExtension(m_strPath, extension);
 

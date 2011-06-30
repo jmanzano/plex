@@ -257,6 +257,8 @@ bool CGUIWindowHome::OnMessage(CGUIMessage& message)
        
         if (item->GetProperty("type") == "artist")
           newItem->m_strPath = "Plex.ActivateWindow(MyMusicFiles," + item->m_strPath + ",return)";
+        else if (item->GetProperty("type") == "photo")
+          newItem->m_strPath = "Plex.ActivateWindow(MyPictures," + item->m_strPath + ",return)";
         else
           newItem->m_strPath = "Plex.ActivateWindow(MyVideoFiles," + item->m_strPath + ",return)";
         
