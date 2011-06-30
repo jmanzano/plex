@@ -534,7 +534,7 @@ bool CDVDPlayer::OpenInputStream()
           if (CFile::Cache(stream->key, path))
           {
             s.filename = path;
-            m_SelectionStreams.Update(s);  
+            m_SelectionStreams.Update(s);
           }
         }
       }

@@ -843,10 +843,14 @@ class PlexMediaNodeLibrary : public PlexMediaNode
         int id = boost::lexical_cast<int>(stream->Attribute("id"));
         int streamType = boost::lexical_cast<int>(stream->Attribute("streamType"));
         int index = -1;
+        int subIndex = -1;
         bool selected = false; 
         
         if (stream->Attribute("index"))
           index = boost::lexical_cast<int>(stream->Attribute("index"));
+        
+        if (stream->Attribute("subIndex"))
+          subIndex = boost::lexical_cast<int>(stream->Attribute("subIndex"));
         
         if (stream->Attribute("selected") && strcmp(stream->Attribute("selected"), "1") == 0)
           selected = true;
@@ -863,7 +867,7 @@ class PlexMediaNodeLibrary : public PlexMediaNode
         if (stream->Attribute("codec"))
           codec = stream->Attribute("codec");
         
-        MediaStreamPtr mediaStream(new MediaStream(id, key, streamType, codec, index, selected, language));
+        MediaStreamPtr mediaStream(new MediaStream(id, key, streamType, codec, index, subIndex, selected, language));
         mediaPart->mediaStreams.push_back(mediaStream);
       }
     }

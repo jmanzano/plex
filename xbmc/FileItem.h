@@ -69,14 +69,15 @@ typedef boost::shared_ptr<CFileItem> CFileItemPtr;
 class MediaStream
 {
  public:
-  MediaStream(int id, const std::string& key, int streamType, const std::string& codec, int index, bool selected, const std::string& language)
-    : id(id), key(key), streamType(streamType), codec(codec), index(index), selected(selected), language(language) {}
+  MediaStream(int id, const std::string& key, int streamType, const std::string& codec, int index, int subIndex, bool selected, const std::string& language)
+    : id(id), key(key), streamType(streamType), codec(codec), index(index), subIndex(subIndex), selected(selected), language(language) {}
    
   int         id;
   std::string key;
   int         streamType;
   std::string codec;
   int         index;
+  int         subIndex;
   bool        selected;
   std::string language;
 };
