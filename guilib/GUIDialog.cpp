@@ -121,7 +121,7 @@ void CGUIDialog::Close(bool forceClose /*= false*/)
   {
     // make sure graphics lock is not held
     int nCount = ExitCriticalSection(g_graphicsContext);
-    g_application.getApplicationMessenger().Close(this, forceClose);
+    g_application.getApplicationMessenger().Close(this, forceClose, false);
     RestoreCriticalSection(g_graphicsContext, nCount);
   }
   else
