@@ -40,6 +40,7 @@ public:
 protected:
   virtual void OnInfo(int item);
   virtual bool OnClick(int iItem);
+  virtual bool OnAction(const CAction &action);
   virtual void UpdateButtons();
   virtual void OnPrepareFileItems(CFileItemList& items);
   virtual bool Update(const CStdString &strDirectory);
