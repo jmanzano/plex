@@ -265,7 +265,8 @@ CDVDPlayer::CDVDPlayer(IPlayerCallback& callback)
       m_dvdPlayerSubtitle(&m_overlayContainer),
       m_messenger("player"),
       m_bFileOpenComplete(false),
-      m_hidingSub(false)
+      m_hidingSub(false),
+      m_vobsubToDisplay(-1)
 {
   m_pDemuxer = NULL;
   m_pSubtitleDemuxer = NULL;
@@ -515,26 +516,60 @@ bool CDVDPlayer::OpenInputStream()
   {
     MediaPartPtr part = GetMediaPart();
     if (part)
-    {          
+    { 
+      MediaStreamPtr lastIdxStream;
+      int            lastIdxSource = -1;
+      
       BOOST_FOREACH(MediaStreamPtr stream, part->mediaStreams)
       {
         if (stream->streamType == PLEX_STREAM_SUBTITLE && stream->index == -1)
         {
           SelectionStream s;
-          s.source   = m_SelectionStreams.Source(STREAM_SOURCE_TEXT, stream->key);
           s.type     = STREAM_SUBTITLE;
-          s.id       = stream->id;
-          s.plexID   = stream->id; 
+          s.id       = stream->subIndex >= 0 ? stream->subIndex : stream->id;
+          s.plexID   = stream->id;
           s.language = stream->language;
           s.filename = stream->key;
           s.name     = stream->language;
+
+          if (stream->codec == "idx")
+          {
+            // All IDX streams have the same source.
+            if (lastIdxStream)
+              s.source = lastIdxSource;
+            else
+              s.source = m_SelectionStreams.Source(STREAM_SOURCE_DEMUX_SUB, stream->key);
+          }
+          else
+          {
+            // New file, new source.
+            s.source = m_SelectionStreams.Source(STREAM_SOURCE_TEXT, stream->key);
+          }
           
-          // Cache the subtitle locally.
-          CStdString path = "z:\\subtitle.plex." + boost::lexical_cast<string>(stream->id) + "." + stream->codec;
-          if (CFile::Cache(stream->key, path))
+          // Cache the subtitle locally. Since multiple streams can be served out of a single file,
+          // let's not download it multiple times, one for each stream.
+          //
+          MediaStreamPtr idxStream = stream;
+          if (lastIdxStream)
+            idxStream = lastIdxStream;
+          
+          CStdString path = "z:\\subtitle.plex." + boost::lexical_cast<string>(idxStream->id) + "." + stream->codec;
+          if (CFile::Exists(path) || CFile::Cache(stream->key, path))
           {
             s.filename = path;
             m_SelectionStreams.Update(s);
+          }
+          
+          // If it's an IDX, we need to cache the SUB file as well.
+          if (stream->codec == "idx")
+          {
+            CStdString path = "z:\\subtitle.plex." + boost::lexical_cast<string>(idxStream->id) + ".sub";
+            if (CFile::Exists(path) == false)
+              CFile::Cache(stream->key + ".sub", path);
+            
+            // Remember the last IDX stream.
+            lastIdxStream = stream;
+            lastIdxSource = s.source;
           }
         }
       }
@@ -628,37 +663,7 @@ bool CDVDPlayer::OpenDemuxStream()
   }
   
   // Update Plex streams from the demuxer.
-  MediaPartPtr part = GetMediaPart();
-  if (part)
-  {          
-    BOOST_FOREACH(MediaStreamPtr stream, part->mediaStreams)
-    {
-      StreamType type = STREAM_NONE;
-      
-      if (stream->streamType == PLEX_STREAM_SUBTITLE)
-        type = STREAM_SUBTITLE;
-      else if (stream->streamType == PLEX_STREAM_AUDIO)
-        type = STREAM_AUDIO;
-      
-      if (type != STREAM_NONE)
-      {
-        // Look for the right index and set the Plex stream ID.
-        int count = m_SelectionStreams.Count(type);
-        for (int i=0; i<count; i++)
-        {
-          SelectionStream& s = m_SelectionStreams.Get(type, i);
-          if (s.id == stream->index)
-          {
-            s.plexID = stream->id;
-            s.language = stream->language;
-            
-            if (stream->streamType == PLEX_STREAM_SUBTITLE)
-              s.name = stream->language;
-          }
-        }
-      }
-    }
-  }
+  RelinkPlexStreams();
   
   return true;
 }
@@ -738,7 +743,13 @@ void CDVDPlayer::OpenDefaultStreams()
         {
           SelectionStream& s = m_SelectionStreams.Get(STREAM_SUBTITLE, i);
           if (s.plexID == stream->id && OpenSubtitleStream(s.id, s.source))
+          {
+            // We're going to need to open this later.
+            if (s.source == STREAM_SOURCE_DEMUX_SUB)
+              m_vobsubToDisplay = s.plexID;
+            
             valid = true;
+          }
         }
       }
       
@@ -750,6 +761,9 @@ void CDVDPlayer::OpenDefaultStreams()
     {
       SelectionStream& s = m_SelectionStreams.Get(STREAM_SUBTITLE, 0);
       OpenSubtitleStream(s.id, s.source);
+      
+      if (s.source == STREAM_SOURCE_DEMUX_SUB)
+        m_vobsubToDisplay = s.plexID;
     }
     
     // Set them on/off based on whether we found one.
@@ -789,6 +803,25 @@ bool CDVDPlayer::ReadPacket(DemuxPacket*& packet, CDemuxStream*& stream)
       {
         m_SelectionStreams.Clear(STREAM_NONE, STREAM_SOURCE_DEMUX_SUB);
         m_SelectionStreams.Update(NULL, m_pSubtitleDemuxer);
+
+        // Make sure the Plex streams are still linked.
+        RelinkPlexStreams();
+        
+        if (m_vobsubToDisplay != -1)
+        {
+          int count = m_SelectionStreams.Count(STREAM_SUBTITLE);
+          for (int i = 0; i<count; i++)
+          {
+            SelectionStream& s = m_SelectionStreams.Get(STREAM_SUBTITLE, i);
+            if (s.plexID == m_vobsubToDisplay && OpenSubtitleStream(s.id, s.source))
+            {
+              OpenSubtitleStream(s.id, s.source);
+              break;
+            }
+          }
+          
+          m_vobsubToDisplay = -1;
+        }
       }
       return true;
     }
@@ -835,6 +868,42 @@ bool CDVDPlayer::ReadPacket(DemuxPacket*& packet, CDemuxStream*& stream)
     return true;
   }
   return false;
+}
+
+void CDVDPlayer::RelinkPlexStreams()
+{
+  MediaPartPtr part = GetMediaPart();
+  if (part)
+  {          
+    BOOST_FOREACH(MediaStreamPtr stream, part->mediaStreams)
+    {
+      StreamType type = STREAM_NONE;
+      
+      if (stream->streamType == PLEX_STREAM_SUBTITLE)
+        type = STREAM_SUBTITLE;
+      else if (stream->streamType == PLEX_STREAM_AUDIO)
+        type = STREAM_AUDIO;
+      
+      if (type != STREAM_NONE)
+      {
+        // Look for the right index and set the Plex stream ID.
+        int count = m_SelectionStreams.Count(type);
+        for (int i=0; i<count; i++)
+        {
+          SelectionStream& s = m_SelectionStreams.Get(type, i);
+          
+          if (s.id == stream->index || s.id == stream->subIndex)
+          {
+            s.plexID = stream->id;
+            s.language = stream->language;
+            
+            if (stream->streamType == PLEX_STREAM_SUBTITLE)
+              s.name = stream->language;
+          }
+        }
+      }
+    }
+  }
 }
 
 bool CDVDPlayer::IsValidStream(CCurrentStream& stream)

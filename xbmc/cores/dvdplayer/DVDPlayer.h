@@ -94,6 +94,7 @@ struct SelectionStream
 {
   SelectionStream()
     : plexID(-1)
+    , plexSubIndex(-1)
     , numChannels(0)
     , codec(CODEC_ID_NONE) {}
   
@@ -123,6 +124,7 @@ struct SelectionStream
   int          source;
   int          id;
   int          plexID;
+  int          plexSubIndex;
   
   int          numChannels;
   CodecID      codec;
@@ -255,6 +257,7 @@ protected:
   void UnlockStreams()                                          { LeaveCriticalSection(&m_critStreamSection); }
   
   void OpenFileComplete();
+  void RelinkPlexStreams();
   
   virtual void OnStartup();
   virtual void OnExit();
@@ -319,6 +322,7 @@ protected:
   
   CFileItemPtr m_itemWithDetails;
   bool         m_hidingSub;
+  int          m_vobsubToDisplay;
 
   MediaPartPtr GetMediaPart()
   {
