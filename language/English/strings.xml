@@ -57,10 +57,10 @@
   <string id="119">New Folder</string>
   <string id="120">Confirm file copy</string>
   <string id="121">Confirm file move</string>
-  <string id="122">Confirm file delete?  This action will delete your file and is irreversible.</string>
+  <string id="122">Confirm file delete?</string>
   <string id="123">Copy these files?</string>
   <string id="124">Move these files?</string>
-  <string id="125">Delete these files? This action will delete your file and is irreversible.</string>
+  <string id="125">This action will delete files and is irreversible.</string>
   <string id="126">Status</string>
   <string id="127">Objects</string>
   <string id="128">General</string>
@@ -1324,7 +1324,7 @@
   <string id="15012"></string>
   <string id="15013"></string>
   <string id="15014"></string>
-  <string id="15015">Remove</string>
+  <string id="15015">Delete...</string>
   <string id="15016">Games</string>
   <string id="15017"></string>
   <string id="15018"></string>
@@ -1514,7 +1514,7 @@
   <string id="16202">Failed to copy at least one file</string>
   <string id="16203">Move failed</string>
   <string id="16204">Failed to move at least one file</string>  
-  <string id="16205">Delete failed</string>
+  <string id="16205">Delete failed, perhaps due to permissions.</string>
   <string id="16206">Failed to delete at least one file</string>
 
   <string id="16300">Video Scaling Method</string>
