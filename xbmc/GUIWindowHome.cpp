@@ -303,6 +303,10 @@ void CGUIWindowHome::UpdateContentForSelectedItem(const std::string& key)
         // Queue.
         m_contentLists[CONTENT_LIST_QUEUE] = Group(kVIDEO_LOADER);
         m_workerManager->enqueue(WINDOW_HOME, MyPlexManager::Get().getPlaylistUrl("queue/unwatched"), CONTENT_LIST_QUEUE);
+        
+        // Recommendations.
+        m_contentLists[CONTENT_LIST_RECOMMENDATIONS] = Group(kVIDEO_LOADER);
+        m_workerManager->enqueue(WINDOW_HOME, MyPlexManager::Get().getPlaylistUrl("recommendations/unwatched"), CONTENT_LIST_RECOMMENDATIONS);
       }
       else if (boost::ends_with(sectionUrl, "shared") == false)
       {
@@ -745,7 +749,7 @@ void CGUIWindowHome::SaveStateBeforePlay(CGUIBaseContainer* container)
 void CGUIWindowHome::HideAllLists()
 {
   // Hide lists.
-  short lists[] = {CONTENT_LIST_ON_DECK, CONTENT_LIST_RECENTLY_ACCESSED, CONTENT_LIST_RECENTLY_ADDED, CONTENT_LIST_QUEUE};
+  short lists[] = {CONTENT_LIST_ON_DECK, CONTENT_LIST_RECENTLY_ACCESSED, CONTENT_LIST_RECENTLY_ADDED, CONTENT_LIST_QUEUE, CONTENT_LIST_RECOMMENDATIONS};
   BOOST_FOREACH(int id, lists)
   {
     SET_CONTROL_HIDDEN(id);
