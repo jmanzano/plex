@@ -568,6 +568,7 @@ class PlexMediaNode
      // Source title and owned.
      SetProperty(pItem, el, "sourceTitle");
      SetProperty(pItem, el, "owned");
+     SetProperty(pItem, el, "recommender");
 
      // Date.
      SetProperty(pItem, el, "subtitle");
