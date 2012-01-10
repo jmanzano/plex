@@ -277,7 +277,7 @@
     </joystick>
   </NumericInput>
   <NowPlaying>
-    <joystick name="Apple Remote">
+    <joystick name="AppleRemote">
       <button id="1">VolumeUp</button>                                  <!--- Up --->
       <button id="2">VolumeDown</button>                                <!--- Down --->
       <button id="3">SkipPrevious</button>                              <!--- Left --->
