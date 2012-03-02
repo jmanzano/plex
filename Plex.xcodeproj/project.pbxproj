@@ -7099,7 +7099,7 @@
 				HEADER_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg";
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -7120,7 +7120,7 @@
 				LIBRARY_SEARCH_PATHS = "";
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg";
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -7221,7 +7221,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = Plex;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg vendor/osx-10.6_i386/include /usr/X11R6/include /usr/X11/include/freetype2";
 				WARNING_CFLAGS = (
 					"-Wno-gnu",
@@ -7328,7 +7328,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = Plex;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg vendor/osx-10.6_i386/include /usr/X11R6/include /usr/X11/include/freetype2";
 				WARNING_CFLAGS = (
 					"-Wno-gnu",
