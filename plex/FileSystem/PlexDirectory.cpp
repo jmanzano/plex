@@ -523,6 +523,8 @@ class PlexMediaNode
  public:
    static PlexMediaNode* Create(TiXmlElement* element);
 
+   virtual ~PlexMediaNode() {}
+  
    CFileItemPtr BuildFileItem(const CURL& url, TiXmlElement& el, bool localServer)
    {
      CStdString parentPath = url.Get();

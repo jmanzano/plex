@@ -561,7 +561,7 @@ bool CRSSDirectory::GetDirectory(const CStdString& path, CFileItemList &items)
 
   /* clear cache */
   m_items.Clear();
-  m_path == "";
+  m_path = "";
 
   TiXmlDocument xmlDoc;
   if (!xmlDoc.LoadFile(strPath))

@@ -12,6 +12,8 @@
 class LaunchHost
 {
 public:
+  virtual ~LaunchHost() {}
+  
   virtual void OnStartup() = 0;
   virtual void OnShutdown() = 0;
 };
