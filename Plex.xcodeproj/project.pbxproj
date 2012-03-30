@@ -2941,8 +2941,10 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				19C28FBDFE9D53C911CA2CBB /* Products */,
 			);
+			indentWidth = 2;
 			name = Plex;
 			sourceTree = "<group>";
+			tabWidth = 2;
 		};
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
@@ -6132,7 +6134,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 			};
 			buildConfigurationList = 1DEB924B08733DCA0010E9CD /* Build configuration list for PBXProject "Plex" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -7090,6 +7092,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -7099,7 +7102,8 @@
 				HEADER_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.6;
+				PROVISIONING_PROFILE = "";
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg";
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -7109,6 +7113,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				DEAD_CODE_STRIPPING = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -7120,7 +7125,8 @@
 				LIBRARY_SEARCH_PATHS = "";
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.6;
+				PROVISIONING_PROFILE = "";
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg";
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -7221,7 +7227,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = Plex;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg vendor/osx-10.6_i386/include /usr/X11R6/include /usr/X11/include/freetype2";
 				WARNING_CFLAGS = (
 					"-Wno-gnu",
@@ -7328,7 +7334,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = Plex;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg vendor/osx-10.6_i386/include /usr/X11R6/include /usr/X11/include/freetype2";
 				WARNING_CFLAGS = (
 					"-Wno-gnu",
