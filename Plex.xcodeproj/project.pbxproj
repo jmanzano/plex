@@ -7137,6 +7137,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				APPLICATION_VERSION = 0.9.5.2;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Plex Inc.";
 				COPY_PHASE_STRIP = NO;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -7227,6 +7228,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = Plex;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg vendor/osx-10.6_i386/include /usr/X11R6/include /usr/X11/include/freetype2";
 				WARNING_CFLAGS = (
@@ -7243,6 +7245,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				APPLICATION_VERSION = 0.9.5.2;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Plex Inc.";
 				COPY_PHASE_STRIP = YES;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -7334,6 +7337,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = Plex;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg vendor/osx-10.6_i386/include /usr/X11R6/include /usr/X11/include/freetype2";
 				WARNING_CFLAGS = (
