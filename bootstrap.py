@@ -63,6 +63,8 @@ def get_exe_environ():
     local_env = {
         'PATH': "%s/../toolchain/bin:%s/bin:/usr/bin:/usr/sbin:/bin:/sbin" % (
             env_path, env_path),
+        'CC':'clang',
+        'CXX':'clang++',
         'CFLAGS': "-I%s/include" % env_path,
         'CXXFLAGS': "-I%s/include" % env_path,
         'ACLOCAL': "aclocal -I \"%s/share/aclocal\"" % env_path,
@@ -124,7 +126,7 @@ def process_args():
     parser.add_option('-d', '--debug', action='store_true', dest='debug', default=False, help='Make a debug build')
     parser.add_option('-c', '--configure-only', action='store_true', dest='confonly', default=False, help="Don't build, just configure")
     parser.add_option('-n', '--no-clean', action='store_true', dest='noclean', default=False, help="Don't clean caches, just build")
-    parser.add_option('-f', '--ffmpeg-cc', action='store', type='string', dest='ffmpegcc', default='gcc', help='Compiler to use for FFmpeg')
+    parser.add_option('-f', '--ffmpeg-cc', action='store', type='string', dest='ffmpegcc', default='clang', help='Compiler to use for FFmpeg')
     (options, args) = parser.parse_args()
     VERBOSE = options.verbose
 

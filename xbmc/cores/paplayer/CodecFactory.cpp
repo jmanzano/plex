@@ -26,7 +26,7 @@
 #include "OGGcodec.h"
 #include "FLACcodec.h"
 #include "WAVcodec.h"
-#include "WAVPackcodec.h"
+//#include "WAVPackcodec.h"
 #include "ModplugCodec.h"
 #include "NSFCodec.h"
 #include "AC3Codec.h"
@@ -80,8 +80,8 @@ ICodec* CodecFactory::CreateCodec(const CStdString& strFileType)
 #endif
   else if (strFileType.Equals("m4a") || strFileType.Equals("aac"))
     return new DVDPlayerCodec();
-  else if (strFileType.Equals("wv"))
-    return new WAVPackCodec();
+  //  else if (strFileType.Equals("wv"))
+  //   return new WAVPackCodec();
   else if (strFileType.Equals("669")  ||  strFileType.Equals("abc") ||
            strFileType.Equals("amf")  ||  strFileType.Equals("ams") ||
            strFileType.Equals("dbm")  ||  strFileType.Equals("dmf") ||

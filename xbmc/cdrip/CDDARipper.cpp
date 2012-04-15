@@ -47,6 +47,7 @@
 #include "LocalizeStrings.h"
 #include "utils/log.h"
 #include "utils/TimeUtils.h"
+#include "DetectDVDType.h"
 
 using namespace std;
 using namespace XFILE;

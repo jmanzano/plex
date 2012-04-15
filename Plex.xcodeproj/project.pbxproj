@@ -547,7 +547,6 @@
 		748660FA12FBF5A600D8F899 /* MusicInfoTagLoaderYM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38E1DBF0D25F9FD00618676 /* MusicInfoTagLoaderYM.cpp */; };
 		748660FB12FBF5A600D8F899 /* MusicSearchDirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38E17390D25F9FA00618676 /* MusicSearchDirectory.cpp */; };
 		748660FC12FBF5A600D8F899 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38E1E690D25F9FD00618676 /* Mutex.cpp */; };
-		748660FD12FBF5A600D8F899 /* mysqldataset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7B2B2E1134F36400713D6D /* mysqldataset.cpp */; };
 		748660FE12FBF5A600D8F899 /* MythDirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 810C9FA50D67D1FB0095F5DD /* MythDirectory.cpp */; };
 		748660FF12FBF5A600D8F899 /* MythFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 810C9FA70D67D1FB0095F5DD /* MythFile.cpp */; };
 		7486610012FBF5A600D8F899 /* MythSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BBB7980D7EA78A00CAAFD3 /* MythSession.cpp */; };
@@ -861,7 +860,6 @@
 		7486672412FBF60600D8F899 /* libpcre.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74462EF112E37D7900C8B41F /* libpcre.a */; };
 		7486672512FBF60600D8F899 /* libsqlite3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74462EF512E37DC800C8B41F /* libsqlite3.a */; };
 		7486672912FBF60600D8F899 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74462EFD12E37F4000C8B41F /* libGLEW.a */; };
-		7486672B12FBF60600D8F899 /* libmysqlclient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74462F0912E3806200C8B41F /* libmysqlclient.a */; };
 		7486672C12FBF60600D8F899 /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74462F1112E380B000C8B41F /* libogg.a */; };
 		7486672D12FBF60600D8F899 /* libpcrecpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74462F1512E380DB00C8B41F /* libpcrecpp.a */; };
 		7486672E12FBF60600D8F899 /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74462F1912E3811600C8B41F /* libvorbis.a */; };
@@ -1225,8 +1223,6 @@
 		7C779E51104A58F900F444C4 /* GUIWindowTestPatternGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIWindowTestPatternGL.h; sourceTree = "<group>"; };
 		7C779E52104A58F900F444C4 /* KeyboardStat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyboardStat.cpp; sourceTree = "<group>"; };
 		7C779E53104A58F900F444C4 /* KeyboardStat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardStat.h; sourceTree = "<group>"; };
-		7C7B2B2E1134F36400713D6D /* mysqldataset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mysqldataset.cpp; sourceTree = "<group>"; };
-		7C7B2B2F1134F36400713D6D /* mysqldataset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mysqldataset.h; sourceTree = "<group>"; };
 		7C8A14541154CB2600E5FCFA /* TextureCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureCache.cpp; sourceTree = "<group>"; };
 		7C8A14551154CB2600E5FCFA /* TextureCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureCache.h; sourceTree = "<group>"; };
 		7C8A187A115B2A8200E5FCFA /* TextureDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureDatabase.cpp; sourceTree = "<group>"; };
@@ -2896,7 +2892,6 @@
 				7486672412FBF60600D8F899 /* libpcre.a in Frameworks */,
 				7486672512FBF60600D8F899 /* libsqlite3.a in Frameworks */,
 				7486672912FBF60600D8F899 /* libGLEW.a in Frameworks */,
-				7486672B12FBF60600D8F899 /* libmysqlclient.a in Frameworks */,
 				7486672C12FBF60600D8F899 /* libogg.a in Frameworks */,
 				7486672D12FBF60600D8F899 /* libpcrecpp.a in Frameworks */,
 				7486672E12FBF60600D8F899 /* libvorbis.a in Frameworks */,
@@ -5498,8 +5493,6 @@
 		E38E1CD60D25F9FC00618676 /* sqLite */ = {
 			isa = PBXGroup;
 			children = (
-				7C7B2B2E1134F36400713D6D /* mysqldataset.cpp */,
-				7C7B2B2F1134F36400713D6D /* mysqldataset.h */,
 				E38E1CD70D25F9FC00618676 /* dataset.cpp */,
 				E38E1CD80D25F9FC00618676 /* dataset.h */,
 				E38E1CDF0D25F9FC00618676 /* qry_dat.cpp */,
@@ -6765,7 +6758,6 @@
 				748660FA12FBF5A600D8F899 /* MusicInfoTagLoaderYM.cpp in Sources */,
 				748660FB12FBF5A600D8F899 /* MusicSearchDirectory.cpp in Sources */,
 				748660FC12FBF5A600D8F899 /* Mutex.cpp in Sources */,
-				748660FD12FBF5A600D8F899 /* mysqldataset.cpp in Sources */,
 				748660FE12FBF5A600D8F899 /* MythDirectory.cpp in Sources */,
 				748660FF12FBF5A600D8F899 /* MythFile.cpp in Sources */,
 				7486610012FBF5A600D8F899 /* MythSession.cpp in Sources */,
@@ -7189,8 +7181,6 @@
 					lib/jsoncpp/jsoncpp/src/lib_json,
 					lib/libmicrohttpd/src/daemon/.libs,
 					"vendor/osx-10.6_i386/lib",
-					"vendor/osx-10.6_i386/lib/mysql",
-					/usr/lib/samba,
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					/usr/X11/lib,
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
@@ -7298,8 +7288,6 @@
 					lib/jsoncpp/jsoncpp/src/lib_json,
 					lib/libmicrohttpd/src/daemon/.libs,
 					"vendor/osx-10.6_i386/lib",
-					"vendor/osx-10.6_i386/lib/mysql",
-					/usr/lib/samba,
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					/usr/X11/lib,
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",

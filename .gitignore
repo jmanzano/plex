@@ -395,6 +395,7 @@ xcuserdata
 /tools/darwin/depends/config.site.mk
 /tools/darwin/depends/Makefile.include
 /tools/darwin/depends/sqlite3/sqlite-3.6.11/
+/tools/darwin/depends/cmake/cmake-2.8.4/
 
 # /tools/EventClients/
 /tools/EventClients/*.pyc

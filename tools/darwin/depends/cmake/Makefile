@@ -2,7 +2,7 @@ include ../Makefile.include
 
 # lib name, version
 APPNAME=cmake
-VERSION=2.8.4
+VERSION=2.8.7
 SOURCE=$(APPNAME)-$(VERSION)
 ARCHIVE=$(SOURCE).tar.gz
 
@@ -16,7 +16,7 @@ APPBIN=$(TOOLCHAIN)/bin/$(APPNAME)
 all: $(APPBIN)
 
 $(TARBALLS_LOCATION)/$(ARCHIVE):
-	$(RETRIEVE_TOOL) $(RETRIEVE_TOOL_FLAGS) $(BASE_URL)/$(ARCHIVE)
+	$(RETRIEVE_TOOL) $(RETRIEVE_TOOL_FLAGS) http://www.cmake.org/files/v2.8/$(ARCHIVE)
 
 $(SOURCE): $(TARBALLS_LOCATION)/$(ARCHIVE)
 	rm -rf $(SOURCE)

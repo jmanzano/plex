@@ -147,10 +147,12 @@ bool CDatabase::Open(DatabaseSettings &dbSettings)
   {
     m_pDB.reset( new SqliteDatabase() ) ;
   }
+#if 0
   else if (dbSettings.type.Equals("mysql"))
   {
     m_pDB.reset( new MysqlDatabase() ) ;
   }
+#endif
   else
   {
     CLog::Log(LOGERROR, "Unable to determine database type: %s", dbSettings.type.c_str());
