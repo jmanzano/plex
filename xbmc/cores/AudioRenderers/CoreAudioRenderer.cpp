@@ -24,6 +24,7 @@
 #include "AudioContext.h"
 #include "GUISettings.h"
 #include "Settings.h"
+#include "osx/CocoaInterface.h"
 #include "utils/Atomics.h"
 #include "utils/log.h"
 #include "utils/TimeUtils.h"
@@ -363,6 +364,11 @@ bool CCoreAudioRenderer::Initialize(IAudioCallback* pCallback, const CStdString&
   if (m_Initialized) // Have to clean house before we start again. TODO: Should we return failure instead?
     Deinitialize();
 
+  // Reset all the devices to a default 'non-hog' and mixable format.
+  // If we don't do this we may be unable to find the Default Output device.
+  // (e.g. if we crashed last time leaving it stuck in AC3/DTS/SPDIF mode)
+  Cocoa_ResetAudioDevices();
+  
   if(bPassthrough)
     g_audioContext.SetActiveDevice(CAudioContext::DIRECTSOUND_DEVICE_DIGITAL);
   else
@@ -390,7 +396,7 @@ bool CCoreAudioRenderer::Initialize(IAudioCallback* pCallback, const CStdString&
   {
     m_Passthrough = InitializeEncoded(outputDevice, uiSamplesPerSec);
     // TODO: wait for audio device startup
-    Sleep(100);
+    Sleep(200);
   }
 
   // If this is a PCM stream, or we failed to handle a passthrough stream natively,

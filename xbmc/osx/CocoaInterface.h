@@ -94,6 +94,9 @@ extern "C"
   // helper from QA 1134
   // http://developer.apple.com/mac/library/qa/qa2001/qa1134.html
   OSStatus SendAppleEventToSystemProcess(AEEventID EventToSend);
+  
+  void Cocoa_ResetAudioDevices();
+  
 #ifdef __cplusplus
 }
 #endif

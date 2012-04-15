@@ -26,7 +26,10 @@
 #import <Carbon/Carbon.h>
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/gl.h>
+#import <AudioUnit/AudioUnit.h>
+#import <AudioToolbox/AudioToolbox.h>
 
+#include "CoreAudio.h"
 #import "CocoaInterface.h"
 #import "DllPaths_generated.h"
 
@@ -682,3 +685,50 @@ OSStatus SendAppleEventToSystemProcess(AEEventID EventToSend)
 
   return(error); 
 }
+
+void Cocoa_ResetAudioDevices()
+{
+  // Reset any devices with an AC3/DTS/SPDIF stream back to a Linear PCM
+  // so that they can become a default output device
+  CoreAudioDeviceList deviceList;
+  CCoreAudioHardware::GetOutputDevices(&deviceList);
+  for (CoreAudioDeviceList::iterator d = deviceList.begin(); d != deviceList.end(); d++)
+  {
+    CCoreAudioDevice device(*d);
+    AudioStreamIdList streamList;
+    if (device.GetStreams(&streamList))
+    {
+      for (AudioStreamIdList::iterator s = streamList.begin(); s != streamList.end(); s++)
+      {
+        CCoreAudioStream stream;
+        if (stream.Open(*s))
+        {
+          AudioStreamBasicDescription currentFormat;
+          if (stream.GetPhysicalFormat(&currentFormat))
+          {
+            if (currentFormat.mFormatID == 'IAC3' || currentFormat.mFormatID == kAudioFormat60958AC3)
+            {
+              StreamFormatList formatList;
+              if (stream.GetAvailablePhysicalFormats(&formatList))
+              {
+                for (StreamFormatList::iterator f = formatList.begin(); f != formatList.end(); f++)
+                {
+                  if ((*f).mFormat.mFormatID == kAudioFormatLinearPCM)
+                  {
+                    if (stream.SetPhysicalFormat(&(*f).mFormat))
+                    {
+                      sleep(1);
+                      break;
+                    }
+                  }
+                }
+              }
+            }              
+          }
+          stream.Close();
+        }
+      }
+    }
+  }  
+}
+
