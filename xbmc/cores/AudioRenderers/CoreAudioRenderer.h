@@ -26,6 +26,8 @@
 #include <CoreServices/CoreServices.h>
 #include "IAudioRenderer.h"
 #include <utils/LockFree.h>
+#include "DispResource.h"
+#include "SingleLock.h"
 
 struct audio_slice
 {
@@ -99,7 +101,7 @@ protected:
   UInt32 m_WatchdogPreroll;
 };
 
-class CCoreAudioRenderer : public IAudioRenderer
+class CCoreAudioRenderer : public IAudioRenderer, public IDispResource
   {
   public:
     CCoreAudioRenderer();
@@ -108,6 +110,7 @@ class CCoreAudioRenderer : public IAudioRenderer
     virtual float GetDelay();
     virtual bool Initialize(IAudioCallback* pCallback, const CStdString& device, int iChannels, enum PCMChannels *channelMap, unsigned int uiSamplesPerSec, unsigned int uiBitsPerSample, bool bResample, bool bIsMusic=false, bool bPassthrough = false);
     virtual bool Deinitialize();
+            bool Reinitialize();
     virtual unsigned int AddPackets(const void* data, unsigned int len);
     virtual unsigned int GetSpace();
     virtual float GetCacheTime();
@@ -128,6 +131,10 @@ class CCoreAudioRenderer : public IAudioRenderer
     virtual void RegisterAudioCallback(IAudioCallback* pCallback) {};
 
     static void EnumerateAudioSinks(AudioSinkList& vAudioSinks, bool passthrough) {};
+    
+    virtual void OnLostDevice();
+    virtual void OnResetDevice();
+    
   private:
     OSStatus OnRender(AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData);
     static OSStatus RenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData);
@@ -166,6 +173,23 @@ class CCoreAudioRenderer : public IAudioRenderer
     // Thread synchronization
     MPEventID m_RunoutEvent;
     long m_DoRunout;
+    
+    // saved Initialize vars
+    struct init_state
+    {
+      bool              reinit;
+      CStdString        device;
+      int               iChannels;
+      enum PCMChannels *channelMap;
+      unsigned int      uiSamplesPerSec;
+      unsigned int      uiBitsPerSample;
+      bool              bResample;
+      bool              bIsMusic;
+      bool              bPassthrough;
+      IAudioCallback   *pCallback;
+    };
+    CCriticalSection m_init_csection;
+    init_state m_init_state;
   };
 
 #endif

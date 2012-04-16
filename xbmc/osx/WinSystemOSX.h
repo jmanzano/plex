@@ -23,7 +23,13 @@
 #define WINDOW_SYSTEM_OSX_H
 
 #include "WinSystem.h"
+#include "CriticalSection.h"
 #include <SDL/SDL_video.h>
+
+typedef uint32_t CGDirectDisplayID;
+typedef u_int32_t CGDisplayChangeSummaryFlags;
+
+class IDispResource;
 
 class CWinSystemOSX : public CWinSystemBase
 {
@@ -46,6 +52,9 @@ public:
   virtual bool Hide();
   virtual bool Show(bool raise = true);
 
+  virtual void Register(IDispResource *resource);
+  virtual void Unregister(IDispResource *resource);
+  
   virtual void EnableSystemScreenSaver(bool bEnable);
   virtual bool IsSystemScreenSaverEnabled();
   
@@ -63,8 +72,10 @@ protected:
   bool  SwitchToVideoMode(int width, int height, double refreshrate);
   void  GetVideoModes(void);
   bool  FlushBuffer(void);
-    virtual size_t DisplayBitsPerPixelForMode(void *mode);
-
+  virtual size_t DisplayBitsPerPixelForMode(void *mode);
+  
+  void  CheckDisplayChanging(u_int32_t flags);
+  static void DisplayReconfigured(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userData);
 
   void* m_glContext;
   static void* m_lastOwnedContext;
@@ -72,6 +83,11 @@ protected:
     
   void* m_desktopVideoMode;
   int m_desktopScreenID;
+  
+  bool                         m_can_display_switch;
+  
+  CCriticalSection             m_resourceSection;
+  std::vector<IDispResource*>  m_resources;
 };
 
 #endif // WINDOW_SYSTEM_H

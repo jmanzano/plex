@@ -29,6 +29,8 @@
 #include "GUISettings.h"
 #include "KeyboardStat.h"
 #include "utils/log.h"
+#include "SingleLock.h"
+#include "DispResource.h"
 #include "PlexHelper.h"
 #include "SystemInfo.h"
 #include "log.h"
@@ -215,6 +217,9 @@ CWinSystemOSX::CWinSystemOSX() : CWinSystemBase()
   m_SDLSurface = NULL;
   m_desktopVideoMode = 0;
   m_desktopScreenID = 0;
+  
+  // check runtime, we only allow this on 10.5+
+  m_can_display_switch = (floor(NSAppKitVersionNumber) >= 949);
 }
 
 CWinSystemOSX::~CWinSystemOSX()
@@ -232,11 +237,17 @@ bool CWinSystemOSX::InitWindowSystem()
   if (!CWinSystemBase::InitWindowSystem())
     return false;
 
+  if (m_can_display_switch)
+    CGDisplayRegisterReconfigurationCallback(DisplayReconfigured, (void*)this);
+  
   return true;
 }
 
 bool CWinSystemOSX::DestroyWindowSystem()
 {
+  if (m_can_display_switch)
+    CGDisplayRemoveReconfigurationCallback(DisplayReconfigured, (void*)this);
+  
   if (m_glContext)
   {
     NSOpenGLContext* oldContext = (NSOpenGLContext*)m_glContext;
@@ -380,6 +391,15 @@ bool CWinSystemOSX::SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool bl
     // FullScreen Mode
     NSOpenGLContext* newContext = NULL;
 
+    if (m_can_display_switch)
+    {
+      // send pre-configuration change now and do not
+      //  wait for switch videomode callback. This gives just
+      //  a little more advanced notice of the display pre-change.
+      if (g_guiSettings.GetBool("videoplayer.adjustrefreshrate"))
+        CheckDisplayChanging(kCGDisplayBeginConfigurationFlag);
+    }
+    
     // Fade to black to hide resolution-switching flicker and garbage.
     CGDisplayFadeReservationToken fade_token = DisplayFadeToBlack();
 
@@ -910,6 +930,20 @@ bool CWinSystemOSX::Hide()
   return true;
 }
 
+void CWinSystemOSX::Register(IDispResource *resource)
+{
+  CSingleLock lock(m_resourceSection);
+  m_resources.push_back(resource);
+}
+
+void CWinSystemOSX::Unregister(IDispResource* resource)
+{
+  CSingleLock lock(m_resourceSection);
+  std::vector<IDispResource*>::iterator i = find(m_resources.begin(), m_resources.end(), resource);
+  if (i != m_resources.end())
+    m_resources.erase(i);
+}
+
 bool CWinSystemOSX::Show(bool raise)
 {
   NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
@@ -1143,6 +1177,50 @@ NSString* screenNameForDisplay(CGDirectDisplayID displayID)
     
     [deviceInfo release];
     return [screenName autorelease];
+}
+
+void CWinSystemOSX::CheckDisplayChanging(u_int32_t flags)
+{
+  if (flags)
+  {
+    CSingleLock lock(m_resourceSection);
+    // tell any shared resources
+    if (flags & kCGDisplayBeginConfigurationFlag)
+    {
+      for (std::vector<IDispResource *>::iterator i = m_resources.begin(); i != m_resources.end(); i++)
+        (*i)->OnLostDevice();
+    }
+    if (flags & kCGDisplaySetModeFlag)
+    {
+      for (std::vector<IDispResource *>::iterator i = m_resources.begin(); i != m_resources.end(); i++)
+        (*i)->OnResetDevice();
+    }
+  }
+}
+
+void CWinSystemOSX::DisplayReconfigured(CGDirectDisplayID display, 
+  CGDisplayChangeSummaryFlags flags, void* userData)
+{
+  CWinSystemOSX *winsys = (CWinSystemOSX*)userData;
+       if (!winsys)
+    return;
+
+  if (flags & kCGDisplaySetModeFlag || flags & kCGDisplayBeginConfigurationFlag)
+  {
+    // pre/post-reconfiguration changes
+    RESOLUTION res = g_graphicsContext.GetVideoResolution();
+    NSScreen* pScreen = [[NSScreen screens] objectAtIndex:g_settings.m_ResInfo[res].iScreen];
+    if (pScreen)
+    {
+      CGDirectDisplayID xbmc_display = GetDisplayIDFromScreen(pScreen);
+      if (xbmc_display == display)
+      {
+        // we only respond to changes on the display we are running on.
+        CSingleLock lock(winsys->m_resourceSection);
+        winsys->CheckDisplayChanging(flags);
+      }
+    }
+  }
 }
 
 #endif
