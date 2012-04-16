@@ -373,28 +373,47 @@ bool CCoreAudioDevice::SetHogStatus(bool hog)
   // the returned pid against getpid, if the match, you have hog mode, if not you don't.
   if (!m_DeviceId)
     return false;
+
+  // Figure out who (if anyone) has hog status.
+  m_Hog = GetHogStatus();
   
   if (hog)
   {
-    if (m_Hog == -1) // Not already set
+    if (m_Hog == getpid())
     {
+      // Nothing to do.
+    }
+    else if (m_Hog == -1)
+    {
+      // Nobody owns it, let's hog away.
       CLog::Log(LOGDEBUG, "CCoreAudioDevice::SetHogStatus: Setting 'hog' status on device 0x%04x", m_DeviceId);
       OSStatus ret = AudioDeviceSetProperty(m_DeviceId, NULL, 0, false, kAudioDevicePropertyHogMode, sizeof(m_Hog), &m_Hog);
+      m_Hog = GetHogStatus();
+      
       if (ret || m_Hog != getpid())
       {
-        CLog::Log(LOGERROR, "CCoreAudioDevice::SetHogStatus: Unable to set 'hog' status. Error = 0x%08x (%4.4s)", ret, CONVERT_OSSTATUS(ret));
+        CLog::Log(LOGERROR, "CCoreAudioDevice::SetHogStatus: Unable to set 'hog' status. Error = 0x%08x (%4.4s) or %d != %d", ret, CONVERT_OSSTATUS(ret), m_Hog, getpid());
         return false;
       }
+      
       CLog::Log(LOGDEBUG, "CCoreAudioDevice::SetHogStatus: Successfully set 'hog' status on device 0x%04x", m_DeviceId);
+    }
+    else
+    {
+      // Somebody else owned it.
+      CLog::Log(LOGERROR, "CCoreAudioDevice::SetHogStatus: Unable to set 'hog' status. Somebody else (%d) owned it.", m_Hog);
     }
   }
   else
   {
-    if (m_Hog > -1) // Currently Set
+    // If we own it, then reset it.
+    if (m_Hog == getpid())
     {
       CLog::Log(LOGDEBUG, "CCoreAudioDevice::SetHogStatus: Releasing 'hog' status on device 0x%04x", m_DeviceId);
       pid_t hogPid = -1;
       OSStatus ret = AudioDeviceSetProperty(m_DeviceId, NULL, 0, false, kAudioDevicePropertyHogMode, sizeof(hogPid), &hogPid);
+      
+      m_Hog = GetHogStatus();
       if (ret || hogPid == getpid())
       {
         CLog::Log(LOGERROR, "CCoreAudioDevice::SetHogStatus: Unable to release 'hog' status. Error = 0x%08x (%4.4s)", ret, CONVERT_OSSTATUS(ret));
@@ -402,7 +421,16 @@ bool CCoreAudioDevice::SetHogStatus(bool hog)
       }
       m_Hog = hogPid; // Reset internal state
     }
+    else if (m_Hog == -1)
+    {
+      CLog::Log(LOGDEBUG, "CCoreAudioDevice::SetHogStatus: No need to release 'hog' status on device 0x%04x.");
+    }
+    else
+    {
+      CLog::Log(LOGERROR, "CCoreAudioDevice::SetHogStatus: Unable to release 'hog' status, it's owned by %d.", m_Hog);
+    }
   }
+  
   return true;
 }
 
@@ -418,6 +446,17 @@ pid_t CCoreAudioDevice::GetHogStatus()
   return hogPid;
 }
 
+static Boolean IsAudioPropertySettable(AudioObjectID id,
+                                       AudioObjectPropertySelector selector,
+                                       Boolean *outData)
+{
+  AudioObjectPropertyAddress property_address;
+  property_address.mSelector = selector;
+  property_address.mScope    = kAudioObjectPropertyScopeGlobal;
+  property_address.mElement  = kAudioObjectPropertyElementMaster;
+  return AudioObjectIsPropertySettable(id, &property_address, outData);
+}
+
 bool CCoreAudioDevice::SetMixingSupport(bool mix)
 {
   if (!m_DeviceId)
@@ -426,15 +465,43 @@ bool CCoreAudioDevice::SetMixingSupport(bool mix)
   if (m_MixerRestore == -1) // This is our first change to this setting. Store the original setting for restore
     restore = (GetMixingSupport() ? 1 : 0);
   UInt32 mixEnable = mix ? 1 : 0;
-  CLog::Log(LOGDEBUG, "CCoreAudioDevice::SetMixingSupport: %sabling mixing for device 0x%04x",mix ? "En" : "Dis",  m_DeviceId);
-  OSStatus ret = AudioDeviceSetProperty(m_DeviceId, NULL, 0, false, kAudioDevicePropertySupportsMixing, sizeof(mixEnable), &mixEnable);
-  if (ret)
+
+  AudioObjectPropertyAddress prop;
+  prop.mSelector = kAudioDevicePropertySupportsMixing;
+  prop.mScope    = kAudioObjectPropertyScopeGlobal;
+  prop.mElement  = kAudioObjectPropertyElementMaster;
+  
+  if (AudioObjectHasProperty(m_DeviceId, &prop)) 
   {
-    CLog::Log(LOGERROR, "CCoreAudioDevice::SetMixingSupport: Unable to set MixingSupport to %s. Error = 0x%08x (%4.4s)", mix ? "'On'" : "'Off'", ret, CONVERT_OSSTATUS(ret));
-    return false;
+    Boolean writable = FALSE;
+    OSStatus ret = IsAudioPropertySettable(m_DeviceId, kAudioDevicePropertySupportsMixing, &writable);
+    if (ret == 0 && writable)
+    {
+      CLog::Log(LOGDEBUG, "CCoreAudioDevice::SetMixingSupport: %sabling mixing for device 0x%04x",mix ? "En" : "Dis",  m_DeviceId);
+      ret = AudioDeviceSetProperty(m_DeviceId, NULL, 0, false, kAudioDevicePropertySupportsMixing, sizeof(mixEnable), &mixEnable);
+      if (ret)
+      {
+        CLog::Log(LOGERROR, "CCoreAudioDevice::SetMixingSupport: Unable to set MixingSupport to %s. Error = 0x%08x (%4.4s)", mix ? "'On'" : "'Off'", ret, CONVERT_OSSTATUS(ret));
+        return false;
+      }
+    }
+    else if (ret == 0)
+    {
+      CLog::Log(LOGDEBUG, "CCoreAudioDevice::SetMixingSupport: Device Mixing property cannot be set.");
+    }
+    else
+    {
+      CLog::Log(LOGERROR, "CCoreAudioDevice::SetMixingSupport: Unable to check if writable. Error = 0x%08x (%4.4s)", ret, CONVERT_OSSTATUS(ret));
+    }
   }
+  else
+  {
+    CLog::Log(LOGDEBUG, "CCoreAudioDevice::SetMixingSupport: Device didn't have the property.");
+  }
+    
   if (m_MixerRestore == -1) 
     m_MixerRestore = restore;
+    
   return true;
 }
 
@@ -736,6 +803,8 @@ bool CCoreAudioStream::SetPhysicalFormat(AudioStreamBasicDescription* pDesc)
     CLog::Log(LOGERROR, "CCoreAudioStream::SetVirtualFormat: Unable to set physical format for stream 0x%04x. Error = 0x%08x (%4.4s)", m_StreamId, ret, CONVERT_OSSTATUS(ret));
     return false;
   }
+  
+  sleep(1);   // For the change to take effect
   return true;   
 }
 
