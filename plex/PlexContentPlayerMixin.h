@@ -215,9 +215,14 @@ class PlexContentPlayerMixin
          
          int choice = CGUIDialogContextMenu::ShowAndGetChoice(choices);
          if (choice >= 0)
+         {
            file->m_strPath = file->m_mediaItems[choice]->m_strPath;
+           file->SetProperty("localPath", file->m_mediaItems[choice]->GetProperty("localPath"));
+         }
          else
+         {
            return false;
+         }
        }
        else
        {
@@ -255,6 +260,7 @@ class PlexContentPlayerMixin
              {
                pickedIndex = qualityMap[q];
                file->m_strPath = file->m_mediaItems[pickedIndex]->m_strPath;
+               file->SetProperty("localPath", file->m_mediaItems[pickedIndex]->GetProperty("localPath"));
                break;
              }
            }
