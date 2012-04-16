@@ -1166,6 +1166,8 @@ size_t CWinSystemOSX::DisplayBitsPerPixelForMode(void *mode)
 
 NSString* screenNameForDisplay(CGDirectDisplayID displayID)
 {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+  
     NSString *screenName = nil;
     
     NSDictionary *deviceInfo = (NSDictionary *)IODisplayCreateInfoDictionary(CGDisplayIOServicePort(displayID), kIODisplayOnlyPreferredName);
@@ -1176,6 +1178,8 @@ NSString* screenNameForDisplay(CGDirectDisplayID displayID)
     }
     
     [deviceInfo release];
+    [pool release];
+  
     return [screenName autorelease];
 }
 
