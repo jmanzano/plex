@@ -381,6 +381,9 @@ void CDVDPlayer::OpenFileComplete()
       err = m_strError, ret = false;
     
     g_application.getApplicationMessenger().MediaOpenComplete(ret, err);
+    
+    // allow renderer to switch to fullscreen if requested
+    m_dvdPlayerVideo.EnableFullscreen(m_PlayerOptions.fullscreen);
   }
 }
 
@@ -1276,9 +1279,6 @@ void CDVDPlayer::Process()
     m_bAbortRequest = true;
     return;
   }
-
-  // allow renderer to switch to fullscreen if requested
-  m_dvdPlayerVideo.EnableFullscreen(m_PlayerOptions.fullscreen);
 
   OpenDefaultStreams();
 

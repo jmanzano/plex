@@ -790,7 +790,7 @@ void CApplicationMessenger::MediaOpenComplete(bool bStatus, const CStdString& st
   ThreadMessage tMsg = {TMSG_MEDIA_OPEN_COMPLETE};
   tMsg.dwParam1 = bStatus;
   tMsg.strParam = strErrorMsg;
-  SendMessage(tMsg, false);
+  SendMessage(tMsg, true);
 }
 
 void CApplicationMessenger::MediaPause()
