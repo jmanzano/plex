@@ -453,7 +453,10 @@ bool CPlexDirectory::ReallyGetDirectory(const CStdString& strPath, CFileItemList
 
   // See if we're not supposed to cache this directory.
   const char* noCache = root->Attribute("nocache");
-  if (noCache && strcmp(noCache, "1") == 0)
+  const char* noCache2 = root->Attribute("noCache");
+  
+  if ((noCache && strcmp(noCache, "1") == 0) ||
+      (noCache2 && strcmp(noCache2, "1") == 0))
     m_dirCacheType = DIR_CACHE_NEVER;
 
   // See if the directory should be automatically refreshed
