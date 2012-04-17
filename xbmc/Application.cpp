@@ -1990,6 +1990,8 @@ bool CApplication::WaitFrame(unsigned int timeout)
 
 void CApplication::NewFrame()
 {
+  HideBusyIndicator();
+  
 #ifdef HAS_SDL
   // We just posted another frame. Keep track and notify.
   SDL_mutexP(m_frameMutex);
@@ -2026,7 +2028,10 @@ void CApplication::Render()
     unsigned int singleFrameTime = 10; // default limit 100 fps
 
     m_bPresentFrame = false;
-    if (!extPlayerActive && g_graphicsContext.IsFullScreenVideo() && !IsPaused())
+
+    bool isBusyDialogShowing = ((CGUIDialogBusy*)g_windowManager.GetWindow(WINDOW_DIALOG_BUSY))->IsDialogRunning();
+    
+    if (!extPlayerActive && g_graphicsContext.IsFullScreenVideo() && !IsPaused() && !isBusyDialogShowing)
     {
 #ifdef HAS_SDL
       SDL_mutexP(m_frameMutex);
@@ -3825,8 +3830,6 @@ bool CApplication::PlayFile(const CFileItem& item, bool bRestart)
 
 void CApplication::FinishPlayingFile(bool bResult, const CStdString& error)
 {
-  HideBusyIndicator();
-  
   if(bResult)
   {
     if (m_iPlaySpeed != 1)
@@ -3861,8 +3864,10 @@ void CApplication::FinishPlayingFile(bool bResult, const CStdString& error)
   }
   else
   {
+    HideBusyIndicator();
+    
     // Display error message.
-    if (g_playlistPlayer.GetPlaylist(g_playlistPlayer.GetCurrentPlaylist()).size() == 1)
+    if (g_playlistPlayer.GetPlaylist(g_playlistPlayer.GetCurrentPlaylist()).size() <= 1)
     {
       CStdString err = error;
       if (err.size() == 0)
@@ -5364,8 +5369,6 @@ void CApplication::SeekPercentage(float percent)
 // SwitchToFullScreen() returns true if a switch is made, else returns false
 bool CApplication::SwitchToFullScreen()
 {
-  HideBusyIndicator();
-  
   // if playing from the video info window, close it first!
   if (g_windowManager.HasModalDialog() && g_windowManager.GetTopMostModalDialogID() == WINDOW_VIDEO_INFO)
   {
