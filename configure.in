@@ -1031,7 +1031,7 @@ if test "x$use_crystalhd" != "xno"; then
     fi
     if test "x$use_crystalhd" != "xno"; then
       SAVE_CFLAGS="$CFLAGS"
-      CFLAGS="-llibcrystalhd"
+      CFLAGS="$SAVE_CFLAGS -llibcrystalhd"
       # check for new crystalhd lib
       AC_COMPILE_IFELSE(
         [ #define __LINUX_USER__
