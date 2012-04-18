@@ -408,11 +408,6 @@ bool CPlexDirectory::ReallyGetDirectory(const CStdString& strPath, CFileItemList
   // Add the sort method.
   items.AddSortMethod(SORT_METHOD_NONE, 552, LABEL_MASKS(strFileLabel, strSecondFileLabel, strDirLabel, strSecondDirLabel));
 
-  // Set the content label.
-  const char* content = root->Attribute("content");
-  if (content && strlen(content) > 0)
-    items.SetContent(content);
-
   // See if it's mixed parent content.
   if (root->Attribute("mixedParents") && strcmp(root->Attribute("mixedParents"), "1") == 0)
     items.SetProperty("mixedParents", "1");
