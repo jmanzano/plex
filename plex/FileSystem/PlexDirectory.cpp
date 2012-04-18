@@ -351,7 +351,13 @@ bool CPlexDirectory::ReallyGetDirectory(const CStdString& strPath, CFileItemList
       pItem->SetProperty("communityRatingColor", communityRatingColor);
 
     if (pluginIdentifier)
+    {
       pItem->SetProperty("pluginIdentifier", pluginIdentifier);
+      
+      CStdString identifier(pluginIdentifier);
+      if (identifier == "com.plexapp.plugins.library")
+        pItem->SetProperty("HasWatchedState", true);
+    }
   }
 
   // If we had providers, whack them.
