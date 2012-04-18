@@ -128,6 +128,13 @@ public:
   bool GetAvailablePhysicalFormats(StreamFormatList* pList);
 
 protected:
+  
+  static OSStatus HardwareStreamListener(AudioObjectID inObjectID,
+                      UInt32 inNumberAddresses,
+                      const AudioObjectPropertyAddress inAddresses[],
+                      void* inClientData);
+  
+  bool m_formatChanged;
   AudioStreamID m_StreamId;
   AudioStreamBasicDescription m_OriginalVirtualFormat;  
   AudioStreamBasicDescription m_OriginalPhysicalFormat;  

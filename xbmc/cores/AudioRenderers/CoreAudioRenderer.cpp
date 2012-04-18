@@ -423,8 +423,6 @@ bool CCoreAudioRenderer::Initialize(IAudioCallback* pCallback, const CStdString&
   if(m_init_state.bPassthrough)
   {
     m_Passthrough = InitializeEncoded(outputDevice, m_init_state.uiSamplesPerSec);
-    // TODO: wait for audio device startup
-    Sleep(200);
   }
 
   // If this is a PCM stream, or we failed to handle a passthrough stream natively,
@@ -446,15 +444,11 @@ bool CCoreAudioRenderer::Initialize(IAudioCallback* pCallback, const CStdString&
     {
       CLog::Log(LOGDEBUG, "CoreAudioRenderer::Initialize: No suitable AC3 output format found. Attempting DD-Wav.");
       configured = InitializePCMEncoded(m_init_state.uiSamplesPerSec);
-      // TODO: wait for audio device startup
-      Sleep(250);
     }
     else
     {
       // Standard PCM data
       configured = InitializePCM(m_init_state.iChannels, m_init_state.uiSamplesPerSec, m_init_state.uiBitsPerSample, m_init_state.channelMap);
-      // TODO: wait for audio device startup
-      Sleep(250);
     }
 
     if (!configured) // No suitable output format was able to be configured

@@ -24,6 +24,7 @@
 #include <PlatformDefs.h>
 #include <Log.h>
 #include <math.h>
+#include <boost/thread.hpp>
 
 char* UInt32ToFourCC(UInt32* pVal) // NOT NULL TERMINATED! Modifies input value.
 {
@@ -660,6 +661,7 @@ UInt32 CCoreAudioDevice::GetNumLatencyFrames()
 CCoreAudioStream::CCoreAudioStream() :
 m_StreamId(0)
 {
+  m_formatChanged = false;
   m_OriginalVirtualFormat.mFormatID = 0;
   m_OriginalPhysicalFormat.mFormatID = 0;
 }
@@ -669,10 +671,47 @@ CCoreAudioStream::~CCoreAudioStream()
   Close();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+OSStatus CCoreAudioStream::HardwareStreamListener(AudioObjectID inObjectID,
+                    UInt32 inNumberAddresses,
+                    const AudioObjectPropertyAddress inAddresses[],
+                    void* inClientData)
+{
+  CCoreAudioStream* stream = (CCoreAudioStream* )inClientData;
+  OSStatus err = noErr;
+  
+  for (int i=0; i<inNumberAddresses; i++)
+  {
+    if (inAddresses[i].mSelector == kAudioStreamPropertyPhysicalFormat)
+    {
+      // Hardware physical format has changed.
+      CStdString formatString;
+      AudioStreamBasicDescription actualFormat;
+      UInt32 propertySize = sizeof(AudioStreamBasicDescription);
+      if (AudioObjectGetPropertyData(stream->m_StreamId, &inAddresses[i], 0, NULL, &propertySize, &actualFormat) == noErr)
+      {
+        CLog::Log(LOGINFO, "CCoreAudioStream::HardwareStreamListener: Hardware format changed to %s", StreamDescriptionToString(actualFormat, formatString));
+        stream->m_formatChanged = true;
+      }
+    }
+  }
+  
+  return err;
+}
+
 bool CCoreAudioStream::Open(AudioStreamID streamId)
 {
   m_StreamId = streamId;
   CLog::Log(LOGDEBUG, "CCoreAudioStream::Open: Opened stream 0x%04x.", m_StreamId);
+  
+  // Watch for changes.
+  AudioObjectPropertyAddress propertyAOPA;
+  propertyAOPA.mElement = kAudioObjectPropertyElementMaster;  
+  propertyAOPA.mScope = kAudioObjectPropertyScopeGlobal;
+  propertyAOPA.mSelector = kAudioStreamPropertyPhysicalFormat;
+  if (AudioObjectAddPropertyListener(m_StreamId, &propertyAOPA, HardwareStreamListener, (void* )this) != noErr)
+    CLog::Log(LOGERROR, "CCoreAudioStream::Open: couldn't set up a property listener.", m_StreamId);
+  
   return true;
 }
 
@@ -694,6 +733,14 @@ void CCoreAudioStream::Close()
     SetPhysicalFormat(&m_OriginalPhysicalFormat);
   }
   
+  // Remove the listener.
+  AudioObjectPropertyAddress propertyAOPA;
+  propertyAOPA.mElement = kAudioObjectPropertyElementMaster;  
+  propertyAOPA.mScope = kAudioObjectPropertyScopeGlobal;
+  propertyAOPA.mSelector = kAudioStreamPropertyPhysicalFormat;
+  if (AudioObjectRemovePropertyListener(m_StreamId, &propertyAOPA, HardwareStreamListener, this) != noErr)
+    CLog::Log(LOGDEBUG, "CCoreAudioStream::Close: Couldn't remove property listener.");
+
   m_OriginalPhysicalFormat.mFormatID = 0;
   m_OriginalVirtualFormat.mFormatID = 0;
   CLog::Log(LOGDEBUG, "CCoreAudioStream::Close: Closed stream 0x%04x.", m_StreamId);
@@ -789,6 +836,8 @@ bool CCoreAudioStream::SetPhysicalFormat(AudioStreamBasicDescription* pDesc)
 {
   if (!pDesc || !m_StreamId)
     return false;
+  
+  // Save original format.
   if (!m_OriginalPhysicalFormat.mFormatID)
   {
     if (!GetPhysicalFormat(&m_OriginalPhysicalFormat)) // Store the original format (as we found it) so that it can be restored later
@@ -796,7 +845,10 @@ bool CCoreAudioStream::SetPhysicalFormat(AudioStreamBasicDescription* pDesc)
       CLog::Log(LOGERROR, "CCoreAudioStream::SetPhysicalFormat: Unable to retrieve current physical format for stream 0x%04x.", m_StreamId);
       return false;
     }
-  }  
+  }
+  
+  // Set the new format.
+  m_formatChanged = false;
   OSStatus ret = AudioStreamSetProperty(m_StreamId, NULL, 0, kAudioStreamPropertyPhysicalFormat, sizeof(AudioStreamBasicDescription), pDesc);
   if (ret)
   {
@@ -804,7 +856,14 @@ bool CCoreAudioStream::SetPhysicalFormat(AudioStreamBasicDescription* pDesc)
     return false;
   }
   
-  sleep(1);   // For the change to take effect
+  // Wait for the format to take effect.
+  int i = 0;
+  for (; i<50 && m_formatChanged == false; i++)
+    boost::this_thread::sleep(boost::posix_time::milliseconds(25));
+  
+  if (m_formatChanged == true)
+    CLog::Log(LOGERROR, "CCoreAudioStream::SetVirtualFormat: Changed physical format in %dms", i*50);
+  
   return true;   
 }
 
