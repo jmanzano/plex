@@ -405,6 +405,7 @@ void CGUIWindowVideoFiles::GetContextButtons(int itemNumber, CContextButtons &bu
       buttons.Add(CONTEXT_BUTTON_INFO, 20352);
     
     if ((item->IsRemoteSharedPlexMediaServerLibrary() == false) &&
+        (item->GetPropertyBOOL("HasWatchedState") == true) &&
         ((item->IsPlexMediaServerLibrary() && m_vecItems->GetContent() != "files") ||
         item->HasProperty("ratingKey")))
     {
