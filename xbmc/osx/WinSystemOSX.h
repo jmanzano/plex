@@ -63,6 +63,7 @@ public:
     
   virtual bool SwitchRefreshRate(float targetFPS, int screenID);
   virtual bool ResetDesktopRefreshRate();
+  virtual void UpdateDisplayBlanking();
 
 protected:
   void* CreateWindowedContext(void* shareCtx);

@@ -84,6 +84,10 @@ void CWinSystemBase::UpdateResolutions()
   window.strMode = "Windowed";
 }
 
+void CWinSystemBase::UpdateDisplayBlanking()
+{
+}
+
 void CWinSystemBase::SetWindowResolution(int width, int height)
 {
   RESOLUTION_INFO& window = g_settings.m_ResInfo[RES_WINDOW];

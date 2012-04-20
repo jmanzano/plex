@@ -774,6 +774,11 @@ void CGraphicContext::ClipToViewWindow()
 {
 }
 
+void CGraphicContext::UpdateDisplayBlanking()
+{
+  g_Windowing.UpdateDisplayBlanking();
+}
+
 void CGraphicContext::GetAllowedResolutions(vector<RESOLUTION> &res)
 {
   res.clear();

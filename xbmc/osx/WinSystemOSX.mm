@@ -43,6 +43,7 @@
 
 #define MAX_DISPLAYS 32
 static NSWindow* blankingWindows[MAX_DISPLAYS];
+static BOOL displaysBlanked = NO;
 
 void* CWinSystemOSX::m_lastOwnedContext = 0;
 
@@ -139,6 +140,10 @@ int GetDisplayIndex(CGDirectDisplayID display)
 
 void BlankOtherDisplays(int screen_index)
 {
+  // abort if displays are already blanked
+  if (displaysBlanked)
+    return;
+  
   int i;
   int numDisplays = [[NSScreen screens] count];
 
@@ -170,6 +175,8 @@ void BlankOtherDisplays(int screen_index)
       [blankingWindows[i] makeKeyAndOrderFront:nil];
     }
   }
+  
+  displaysBlanked = YES;
 }
 
 void UnblankDisplays(void)
@@ -187,6 +194,8 @@ void UnblankDisplays(void)
       blankingWindows[i] = 0;
     }
   }
+  
+  displaysBlanked = NO;
 }
 
 CGDisplayFadeReservationToken DisplayFadeToBlack(void)
@@ -357,6 +366,13 @@ bool CWinSystemOSX::ResizeWindow(int newWidth, int newHeight, int newLeft, int n
   m_glContext = context;
 
   return true;
+}
+
+void CWinSystemOSX::UpdateDisplayBlanking()
+{
+  RESOLUTION res = g_graphicsContext.GetVideoResolution();
+  RESOLUTION_INFO resInfo = g_settings.m_ResInfo[res];
+  g_guiSettings.GetBool("videoscreen.blankdisplays") && resInfo.bFullScreen ? BlankOtherDisplays(resInfo.iScreen) : UnblankDisplays();
 }
 
 bool CWinSystemOSX::SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool blankOtherDisplays)

@@ -191,6 +191,7 @@ public:
     else
       UpdateFinalTransform(TransformMatrix());
   }
+  void UpdateDisplayBlanking();
 
 protected:
   void SetFullScreenViewWindow(RESOLUTION &res);
