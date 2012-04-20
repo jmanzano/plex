@@ -690,6 +690,8 @@ void CGUIWindowSettingsCategory::UpdateSettings()
           pControl->SetEnabled(true);
         else
           pControl->SetEnabled(false);
+        
+        g_graphicsContext.UpdateDisplayBlanking();
       }
     }
 #endif
