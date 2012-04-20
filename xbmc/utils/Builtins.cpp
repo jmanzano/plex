@@ -347,7 +347,8 @@ int CBuiltins::Execute(const CStdString& execString)
   else if (execute.Equals("runscript") && params.size())
   {
 #if defined(__APPLE__)
-    if (CUtil::GetExtension(strParameterCaseIntact) == ".applescript")
+    if (CUtil::GetExtension(strParameterCaseIntact) == ".applescript" ||
+        CUtil::GetExtension(strParameterCaseIntact) == ".scpt")
     {
       CStdString osxPath = CSpecialProtocol::TranslatePath(strParameterCaseIntact);
       Cocoa_DoAppleScriptFile(osxPath.c_str());
