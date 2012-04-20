@@ -142,6 +142,7 @@ public:
   virtual bool Restore();
   virtual bool Hide();
   virtual bool Show(bool raise = true);
+  virtual bool UpdateDisplayBlanking();
 
    // OS System screensaver
   virtual void EnableSystemScreenSaver(bool bEnable);
