@@ -344,7 +344,6 @@ int CBuiltins::Execute(const CStdString& execString)
     CGUIMessage msg(GUI_MSG_SETFOCUS, g_windowManager.GetActiveWindow(), controlID, subItem);
     g_windowManager.SendMessage(msg);
   }
-#ifdef HAS_PYTHON
   else if (execute.Equals("runscript") && params.size())
   {
 #if defined(__APPLE__)
@@ -356,6 +355,7 @@ int CBuiltins::Execute(const CStdString& execString)
     else
 #endif
     {
+#ifdef HAS_PYTHON
       vector<CStdString> argv = params;
 
       vector<CStdString> path;
@@ -370,9 +370,9 @@ int CBuiltins::Execute(const CStdString& execString)
         scriptpath = script->LibPath();
 
       g_pythonParser.evalFile(scriptpath, argv);
+#endif
     }
   }
-#endif
 #if defined(__APPLE__)
   else if (execute.Equals("runapplescript"))
   {
