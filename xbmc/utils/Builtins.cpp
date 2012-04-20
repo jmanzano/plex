@@ -195,6 +195,9 @@ const BUILT_IN commands[] = {
   { "LCD.Suspend",                false,  "Suspends LCDproc" },
   { "LCD.Resume",                 false,  "Resumes LCDproc" },
 #endif
+#if defined(__APPLE__) || defined(_WIN32)
+  { "ToggleDisplayBlanking",      false,  "Toggle display blanking"},
+#endif
 };
 
 bool CBuiltins::HasCommand(const CStdString& execString)
@@ -1379,6 +1382,14 @@ int CBuiltins::Execute(const CStdString& execString)
   else if (execute.Equals("lcd.resume"))
   {
     g_lcd->Resume();
+  }
+#endif
+#if defined(__APPLE__) || defined(_WIN32)
+  else if (execute.Equals("toggledisplayblanking"))
+  {
+    g_guiSettings.SetBool("videoscreen.blankdisplays", !g_guiSettings.GetBool("videoscreen.blankdisplays"));
+    g_graphicsContext.UpdateDisplayBlanking();
+    //g_graphicsContext.SetVideoResolution(g_graphicsContext.GetVideoResolution(), true);
   }
 #endif
   else
