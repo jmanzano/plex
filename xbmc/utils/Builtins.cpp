@@ -229,8 +229,9 @@ int CBuiltins::Execute(const CStdString& execString)
 {
   // Get the text after the "XBMC."
   CStdString execute;
+  CStdString paramString;
   vector<CStdString> params;
-  CUtil::SplitExecFunction(execString, execute, params);
+  CUtil::SplitExecFunction(execString, execute, params, paramString);
   execute.ToLower();
   CStdString parameter = params.size() ? params[0] : "";
   CStdString strParameterCaseIntact = parameter;
@@ -377,7 +378,7 @@ int CBuiltins::Execute(const CStdString& execString)
 #if defined(__APPLE__)
   else if (execute.Equals("runapplescript"))
   {
-    Cocoa_DoAppleScript(strParameterCaseIntact.c_str());
+    Cocoa_DoAppleScript(paramString.c_str());
   }
 #endif
   else if (execute.Equals("system.exec"))
