@@ -2532,7 +2532,11 @@ bool CUtil::TestSplitExec()
 void CUtil::SplitExecFunction(const CStdString &execString, CStdString &function, vector<CStdString> &parameters)
 {
   CStdString paramString;
+  SplitExecFunction(execString, function, parameters, paramString);
+}
 
+void CUtil::SplitExecFunction(const CStdString &execString, CStdString &function, vector<CStdString> &parameters, CStdString &paramString)
+{
   int iPos = execString.Find("(");
   int iPos2 = execString.ReverseFind(")");
   if (iPos > 0 && iPos2 > 0)
