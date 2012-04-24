@@ -6110,6 +6110,7 @@
 				748667A512FC04D800D8F899 /* Copy Root Files */,
 				748667B212FC05DE00D8F899 /* Copy Libraries */,
 				E31A8DE51356DFAF00EEB013 /* Update Build Number */,
+				E3AC08B2154691EB0035E687 /* Code Sign */,
 			);
 			buildRules = (
 			);
@@ -6218,6 +6219,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/usr/bin/python ./build-number.py";
+		};
+		E3AC08B2154691EB0035E687 /* Code Sign */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Code Sign";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/codesign --force --sign \"Developer ID Application: Plex Inc.\" -r requirement.bin \"$BUILT_PRODUCTS_DIR/Plex.app\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -7129,7 +7145,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				APPLICATION_VERSION = 0.9.5.2;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Plex Inc.";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -7218,7 +7234,6 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = Plex;
-				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg vendor/osx-10.6_i386/include /usr/X11R6/include /usr/X11/include/freetype2";
 				WARNING_CFLAGS = (
@@ -7235,7 +7250,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				APPLICATION_VERSION = 0.9.5.2;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Plex Inc.";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = YES;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -7325,7 +7340,6 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = Plex;
-				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = ". xbmc/cores/dvdplayer/Codecs/ffmpeg vendor/osx-10.6_i386/include /usr/X11R6/include /usr/X11/include/freetype2";
 				WARNING_CFLAGS = (
