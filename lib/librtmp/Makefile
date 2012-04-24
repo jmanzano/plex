@@ -18,8 +18,8 @@ OSTYPE	= $(shell uname)
 
 ifeq ($(OSTYPE),Darwin)
   SYS=darwin
-  XCFLAGS=-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-  XLDFLAGS=-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+  XCFLAGS=$(CFLAGS) -arch i386 -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.6.sdk
+  XLDFLAGS=$(LDFLAGS) -arch i386 -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.6.sdk
   MACHINE = $(shell uname -m)
   ifeq ($(findstring Power,$(MACHINE)), Power)
     arch = ppc
@@ -36,7 +36,7 @@ LIBRTMP = librtmp/librtmp/librtmp.so
 all:: librtmp/librtmp/librtmp.so
 
 $(LIBRTMP): librtmp/Makefile
-	make SYS=$(SYS) prefix=$(prefix) XCFLAGS="$(XCFLAGS)" XLDFLAGS="$(XLDFLAGS)" -C librtmp/librtmp
+	make SYS=$(SYS) prefix=$(PREFIX_PATH) XCFLAGS="$(XCFLAGS)" XLDFLAGS="$(XLDFLAGS)" -C librtmp/librtmp
 
 librtmp/Makefile:
 	svn export svn://svn.mplayerhq.hu/rtmpdump/tags/rel-2.3 librtmp
@@ -45,10 +45,10 @@ ifeq ($(OSTYPE),Darwin)
 endif
 
 install:
-	make SYS=$(SYS) prefix=$(prefix) -C librtmp/librtmp install
+	make SYS=$(SYS) prefix=$(PREFIX_PATH) -C librtmp/librtmp install
 
 clean:
-	make SYS=$(SYS) prefix=$(prefix) -C librtmp/librtmp clean
+	make SYS=$(SYS) prefix=$(PREFIX_PATH) -C librtmp/librtmp clean
 
 distclean::
 	rm -rf librtmp

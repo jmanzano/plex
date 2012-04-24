@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SRC_LIB_RTMP="/opt/local/lib/librtmp.so.0"
+SRC_LIB_RTMP="${PREFIX_PATH}/lib/librtmp.so.0"
 if [ -e ./system ]; then
   DST_LIB_RTMP="./system/librtmp.so"
 else

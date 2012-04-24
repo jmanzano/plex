@@ -65,6 +65,7 @@ def get_exe_environ():
             env_path, env_path),
         'CC':'clang',
         'CXX':'clang++',
+        'PREFIX_PATH': env_path,
         'CFLAGS': "-I%s/include" % env_path,
         'CXXFLAGS': "-I%s/include" % env_path,
         'ACLOCAL': "aclocal -I \"%s/share/aclocal\"" % env_path,
@@ -132,6 +133,11 @@ def process_args():
 
     return options
 
+def build_rtmp():
+  run_cmd(['make', '-C', 'lib/librtmp'], "Building librtmp")
+  run_cmd(['make', '-C', 'lib/librtmp', 'install'], "Installing librtmp")
+  run_cmd('./lib/librtmp/darwin_package_librtmp.sh', "Installing librtmp into system")
+  
 def main():
     try:
         options = process_args()
@@ -140,6 +146,7 @@ def main():
         configure_internal_libs(options)
         if not options.confonly:
             build_internal_libs()
+        build_rtmp()
     except BootstrapError, e:
         print bcolors.FAIL + ("...%s" % e) + bcolors.ENDC
         print "Output: %s" % e.output

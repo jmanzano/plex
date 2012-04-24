@@ -1086,6 +1086,8 @@ xcuserdata
 /xbmc/lib/cximage-6.0/zlib/zconf.h
 /xbmc/lib/cximage-6.0/zlib/Makefile
 
+/lib/librtmp/
+
 # /xbmc/lib/libexif
 /xbmc/lib/libexif/Makefile
 /xbmc/lib/libexif/Debug (DLL)
