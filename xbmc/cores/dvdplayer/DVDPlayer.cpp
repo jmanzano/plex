@@ -1198,6 +1198,20 @@ void CDVDPlayer::Process()
 
   if (m_item.IsWebKit())
   {
+    // Get the hostname of the best server
+    PlexServerPtr bestServer = PlexServerManager::Get().bestServer();
+    CStdString serverHost = bestServer->address;
+    
+    // If we ended up with a webkit URL which is local, restart the player. This 
+    // will be the case if we're resolving an indirect.
+    //
+    if (Cocoa_IsHostLocal(serverHost) == true)
+    {
+      g_application.getApplicationMessenger().RestartWithNewPlayer(0, m_item.m_strPath);
+      m_bFileOpenComplete = true;
+      return;
+    }
+    
     int pos = m_filename.find("&") + 1;
     
     // Extract the web page URL and decode it
@@ -1208,11 +1222,7 @@ void CDVDPlayer::Process()
     CStdString extraOptions = m_filename.substr(pos, m_filename.size() - pos);
     boost::replace_all(extraOptions, "/", "%2F");
     extraOptions += "&webkit=1";
-
-    // Get the hostname of the best server
-    PlexServerPtr bestServer = PlexServerManager::Get().bestServer();
-    CStdString serverHost = bestServer->address;
-
+    
     // Generate a transcode URL and set the filename
     m_filename = TranscodeURL(stopURL, mediaURLString, serverHost, extraOptions);
     dprintf("Transcode URL for WebKit content: %s\n", m_filename.c_str());
