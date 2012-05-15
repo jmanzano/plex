@@ -426,18 +426,18 @@ void CFileCurl::SetCommonOptions(CReadState* state)
   if (m_clearCookies == false)
   {
     // Enable cookie engine for current handle to re-use them in future requests
-    CStdString strCookieFile;
-    CStdString strTempPath = CSpecialProtocol::TranslatePath(g_advancedSettings.m_cachePath);
-    CUtil::AddFileToFolder(strTempPath, "cookies.dat", strCookieFile);
+    //CStdString strCookieFile;
+    //CStdString strTempPath = CSpecialProtocol::TranslatePath(g_advancedSettings.m_cachePath);
+    //CUtil::AddFileToFolder(strTempPath, "cookies.dat", strCookieFile);
     
-    g_curlInterface.easy_setopt(h, CURLOPT_COOKIEFILE, strCookieFile.c_str());
-    g_curlInterface.easy_setopt(h, CURLOPT_COOKIEJAR, strCookieFile.c_str());
+    //g_curlInterface.easy_setopt(h, CURLOPT_COOKIEFILE, strCookieFile.c_str());
+    //g_curlInterface.easy_setopt(h, CURLOPT_COOKIEJAR, strCookieFile.c_str());
     
     // Set custom cookie if requested
     if (!m_cookie.IsEmpty())
       g_curlInterface.easy_setopt(h, CURLOPT_COOKIE, m_cookie.c_str());
     
-    g_curlInterface.easy_setopt(h, CURLOPT_COOKIELIST, "FLUSH");
+    //g_curlInterface.easy_setopt(h, CURLOPT_COOKIELIST, "FLUSH");
   }
   else
   {
