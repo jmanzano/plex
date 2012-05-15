@@ -833,6 +833,12 @@ void CGUIWindowSettingsCategory::UpdateSettings()
       CGUIControl *pControl = (CGUIControl *)GetControl(pSettingControl->GetID());
       if (pControl) pControl->SetEnabled(enabled);
     }
+    else if (strSetting.Equals("plexmediaserver.localtranscodequality"))
+    {
+      bool enabled = g_guiSettings.GetBool("plexmediaserver.forcelocaltranscode");
+      CGUIControl *pControl = (CGUIControl *)GetControl(pSettingControl->GetID());
+      if (pControl) pControl->SetEnabled(enabled);
+    }
 #ifdef HAS_WEB_SERVER
     else if (strSetting.Equals("services.webserverusername"))
     {

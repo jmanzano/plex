@@ -282,7 +282,7 @@ protected:
 
   virtual void OnStartup();
   virtual void OnExit();
-  virtual CStdString TranscodeURL(CStdString& stopURL, const CStdString& url, const CStdString& transcodeHost = "", const CStdString& extraOptions = "");
+  virtual CStdString TranscodeURL(CStdString& stopURL, const CStdString& url, int quality=-1, const CStdString& transcodeHost = "", const CStdString& extraOptions = "");
   virtual void Process();
 
   bool OpenAudioStream(int iStream, int source);

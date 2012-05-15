@@ -1082,8 +1082,12 @@ class PlexAsyncUrlResolver
   PlexAsyncUrlResolverPtr m_me;
 };
 
-CStdString CDVDPlayer::TranscodeURL(CStdString& stopURL, const CStdString& url, const CStdString& transcodeHost, const CStdString& extraOptions)
+CStdString CDVDPlayer::TranscodeURL(CStdString& stopURL, const CStdString& url, int quality, const CStdString& transcodeHost, const CStdString& extraOptions)
 {
+  // Figure out quality.
+  if (quality == -1)
+    quality = g_guiSettings.GetInt("myplex.remoteplexquality");
+  
   // Initialise the transcode URL.
   CURL transcodeURL(m_filename);
   transcodeURL.SetFileName("video/:/transcode/segmented/start.m3u8");
@@ -1111,7 +1115,6 @@ CStdString CDVDPlayer::TranscodeURL(CStdString& stopURL, const CStdString& url, 
     options += "&" + extraOptions;
   
   // Append the quality option
-  int quality = g_guiSettings.GetInt("myplex.remoteplexquality");
   quality = (quality > -1) ? (quality+3) : 7;
   options += "&quality=" + lexical_cast<string>(quality);
   
@@ -1224,7 +1227,7 @@ void CDVDPlayer::Process()
     extraOptions += "&webkit=1";
     
     // Generate a transcode URL and set the filename
-    m_filename = TranscodeURL(stopURL, mediaURLString, serverHost, extraOptions);
+    m_filename = TranscodeURL(stopURL, mediaURLString, -1, serverHost, extraOptions);
     dprintf("Transcode URL for WebKit content: %s\n", m_filename.c_str());
   }
   
@@ -1240,17 +1243,34 @@ void CDVDPlayer::Process()
       // Save it.
       m_itemWithDetails = items[0];
     }
+
+    CURL mediaURL(m_filename);
     
-    // If it's remote, see if we're transcoding.
-    if (m_item.IsRemotePlexMediaServerLibrary() && g_guiSettings.GetInt("myplex.remoteplexquality") != -1)
+    int quality = 0;
+    bool transcode = false;
+    
+    if (m_item.IsRemotePlexMediaServerLibrary() == true && g_guiSettings.GetInt("myplex.remoteplexquality") != -1)
+    {
+      // This is a remote transcode.
+      transcode = true;
+      quality = g_guiSettings.GetInt("myplex.remoteplexquality"); 
+    }
+    else if (g_guiSettings.GetBool("plexmediaserver.forcelocaltranscode") == true && Cocoa_IsHostLocal(mediaURL.GetHostName()) == false)
+    {
+      // This is a forced local transcode.
+      transcode = true;
+      quality = g_guiSettings.GetInt("plexmediaserver.localtranscodequality");
+    }
+    
+    // If it's remote, see if we're transcoding (or if it's on the local network and we've force enabled transcoding.
+    if (transcode)
     {
       // Build the media URL.
-      CURL mediaURL(m_filename);
       mediaURL.SetHostName("127.0.0.1");
       mediaURL.SetPort(32400);
       mediaURL.SetOptions("");
       
-      m_filename = TranscodeURL(stopURL, mediaURL.Get());
+      m_filename = TranscodeURL(stopURL, mediaURL.Get(), quality);
       dprintf("Transcode URL for remote content: %s", m_filename.c_str());
     }
   }

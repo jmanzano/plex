@@ -2192,6 +2192,8 @@
   <string id="40210">Media Server</string>
   <string id="40211">Manually specify server</string>
   <string id="40212">Address</string>
+  <string id="40213">Force transcoding on local network</string>
+  <string id="40214">Quality</string>
 
   <string id="42000">Could not read from input stream</string>
   <string id="42001">Could not determine input format</string>

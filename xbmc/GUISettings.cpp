@@ -741,6 +741,11 @@ void CGUISettings::Initialize()
   AddBool(pms, "plexmediaserver.manualaddress", 40211, false);
   AddString(pms, "plexmediaserver.address", 40212, "0.0.0.0", EDIT_CONTROL_IP_INPUT);
   
+  AddBool(pms, "plexmediaserver.forcelocaltranscode", 40213, false);
+  
+  transcodeQualityMap.erase(43000-1);
+  AddInt(pms, "plexmediaserver.localtranscodequality", 40214, -1, transcodeQualityMap, SPIN_CONTROL_TEXT);
+  
   AddCategory(6, "network", 798);
   if (g_application.IsStandAlone())
   {
