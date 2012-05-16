@@ -1,0 +1,20 @@
+- NEW: Developer ID-signed for Mountain Lion.
+- NEW: Support for Crystal HD.
+- NEW: Allow forcing transcoding on local networks.
+  
+- FIX: Fix a crash when playing video over VNC.
+- FIX: Apple remote keymap was incorrect in Now Playing window.
+- FIX: Many fixes for optical/HDMI audio output.
+- FIX: Transcoding AAC and DTS to AC3 works now.
+- FIX: When selecting multi-item videos, it always played the first item.
+- FIX: Occasional flicker when starting videos.
+- FIX: Respect the "noCache" attribute, fixes some channels not refreshing properly (e.g. Netflix).
+- FIX: RTMP wasn't enabled properly.
+- FIX: When playing some WebKit channels, it improperly transcoded, resulting in no audio.
+- FIX: Saved cookies were making some channels fail to play (e.g. YouTube).
+- FIX: Skinning issue that could make multiple thumbs appear for some content.
+- FIX: Only show watched state (and context menu items) for library content.
+- FIX: Changing display blanking settings required exiting and re-entering full screen to take effect.
+- FIX: Plex.ToggleDisplayBlanking keymap function restored.
+- FIX: Plex.RunScript and Plex.RunAppleScript work again (Mac OS only).
+- FIX: Plex.RunScript handles files with the .scpt extension as well as .applescript (Mac OS X only).
