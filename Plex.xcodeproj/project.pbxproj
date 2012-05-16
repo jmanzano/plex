@@ -7144,7 +7144,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				APPLICATION_VERSION = 0.9.5.2;
+				APPLICATION_VERSION = 0.9.5.3;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				GCC_AUTO_VECTORIZATION = YES;
@@ -7249,7 +7249,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				APPLICATION_VERSION = 0.9.5.2;
+				APPLICATION_VERSION = 0.9.5.3;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = YES;
 				GCC_AUTO_VECTORIZATION = YES;
