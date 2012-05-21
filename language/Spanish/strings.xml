@@ -1573,7 +1573,17 @@
 
   <string id="17500">Mostrar la cuenta atrás para el reposo</string>
 
-  <string id="19000">Cambiar al canal</string>
+  <string id="19000">Correo electrónico</string>
+  <string id="19001">Contraseña</string>
+  <string id="19002">Conectar</string>
+  <string id="19003">Desconectar</string>
+
+  <string id="19010">No Conectado</string>
+  <string id="19011">Conectado</string>
+  <string id="19012">Error Conectando</string>
+
+  <string id="19020">Contenido compartido</string>
+  <string id="19021">Cola</string>
 
   <string id="20000">Directorio de grabación de CDs de audio</string>
   <string id="20001">Usar reproductor DVD externo</string>
